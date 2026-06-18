@@ -1,0 +1,422 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Roboto', 'Segoe UI', sans-serif;
+    background: linear-gradient(135deg, #ffd1dc 0%, #b4e4ff 100%);
+    min-height: 100vh;
+    padding: 20px;
+}
+
+.container {
+    max-width: 800px;
+    margin: 0 auto;
+}
+
+.app-header {
+    text-align: center;
+    margin-bottom: 32px;
+}
+
+.header-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 24px;
+    padding: 16px 24px;
+    background: rgba(255, 255, 255, 0.9);
+    border-radius: 12px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.user-info {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    color: #666;
+    font-size: 14px;
+}
+
+.user-info .material-icons {
+    color: #b4e4ff;
+    font-size: 24px;
+}
+
+.btn-logout {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 8px 16px;
+    background: #ffb3d1;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: background 0.3s, transform 0.1s;
+}
+
+.btn-logout:hover {
+    background: #ff9ec3;
+}
+
+.btn-logout:active {
+    transform: scale(0.95);
+}
+
+.btn-logout .material-icons {
+    font-size: 18px;
+}
+
+.app-title {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    color: white;
+    font-size: 32px;
+    font-weight: 500;
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.app-title .material-icons {
+    font-size: 36px;
+}
+
+.app-title .emoji {
+    font-size: 32px;
+    animation: sparkle 2s ease-in-out infinite;
+}
+
+.app-title .emoji:last-child {
+    animation-delay: 1s;
+}
+
+@keyframes sparkle {
+    0%, 100% {
+        transform: scale(1) rotate(0deg);
+        opacity: 1;
+    }
+    50% {
+        transform: scale(1.2) rotate(10deg);
+        opacity: 0.8;
+    }
+}
+
+.card {
+    background: white;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1), 0 8px 16px rgba(0, 0, 0, 0.1);
+    transition: box-shadow 0.3s ease;
+}
+
+.input-card {
+    padding: 24px;
+    margin-bottom: 24px;
+}
+
+.input-section {
+    display: flex;
+    gap: 12px;
+    flex-wrap: wrap;
+}
+
+.input-wrapper {
+    position: relative;
+    flex: 1;
+    min-width: 200px;
+}
+
+.input-icon {
+    position: absolute;
+    left: 12px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #999;
+    font-size: 20px;
+}
+
+#todoInput {
+    width: 100%;
+    padding: 16px 16px 16px 44px;
+    border: 1px solid #e0e0e0;
+    border-radius: 4px;
+    font-size: 16px;
+    font-family: 'Roboto', sans-serif;
+    transition: border-color 0.3s, box-shadow 0.3s;
+}
+
+#todoInput:focus {
+    outline: none;
+    border-color: #b4e4ff;
+    box-shadow: 0 0 0 2px rgba(180, 228, 255, 0.2);
+}
+
+.priority-wrapper {
+    min-width: 120px;
+}
+
+#prioritySelect {
+    width: 100%;
+    padding: 16px 12px;
+    border: 1px solid #e0e0e0;
+    border-radius: 4px;
+    font-size: 16px;
+    font-family: 'Roboto', sans-serif;
+    background: white;
+    cursor: pointer;
+    transition: border-color 0.3s, box-shadow 0.3s;
+}
+
+#prioritySelect:focus {
+    outline: none;
+    border-color: #b4e4ff;
+    box-shadow: 0 0 0 2px rgba(180, 228, 255, 0.2);
+}
+
+.btn-add {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 16px 24px;
+    background: #b4e4ff;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    font-size: 16px;
+    font-weight: 500;
+    font-family: 'Roboto', sans-serif;
+    cursor: pointer;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+    transition: background 0.3s, box-shadow 0.3s, transform 0.1s;
+}
+
+.btn-add:hover {
+    background: #9dd4f5;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+}
+
+.btn-add:active {
+    transform: scale(0.98);
+}
+
+.btn-add .material-icons {
+    font-size: 20px;
+}
+
+.todo-container {
+    background: white;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1), 0 8px 16px rgba(0, 0, 0, 0.1);
+    overflow: hidden;
+}
+
+#todoList {
+    list-style: none;
+}
+
+.todo-item {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    padding: 20px 24px;
+    background: white;
+    border-bottom: 1px solid #f0f0f0;
+    transition: background 0.2s, transform 0.1s;
+}
+
+.todo-item:last-child {
+    border-bottom: none;
+}
+
+.todo-item:hover {
+    background: #fafafa;
+}
+
+.todo-item.completed {
+    opacity: 0.6;
+}
+
+.todo-item.completed .todo-text {
+    text-decoration: line-through;
+    color: #999;
+}
+
+.todo-checkbox {
+    width: 20px;
+    height: 20px;
+    cursor: pointer;
+    accent-color: #b4e4ff;
+}
+
+.priority-badge {
+    display: inline-flex;
+    align-items: center;
+    padding: 6px 12px;
+    border-radius: 16px;
+    font-size: 12px;
+    font-weight: 500;
+    color: white;
+    white-space: nowrap;
+}
+
+.priority-badge.priority-high {
+    background: #ff9ec3;
+    box-shadow: 0 2px 4px rgba(255, 158, 195, 0.3);
+}
+
+.priority-badge.priority-medium {
+    background: #b4e4ff;
+    box-shadow: 0 2px 4px rgba(180, 228, 255, 0.3);
+}
+
+.priority-badge.priority-low {
+    background: #d4d4d4;
+    box-shadow: 0 2px 4px rgba(212, 212, 212, 0.3);
+}
+
+.todo-text {
+    flex: 1;
+    font-size: 16px;
+    color: #333;
+    word-break: break-word;
+}
+
+.delete-btn {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    padding: 8px 16px;
+    background: #ffb3d1;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 14px;
+    font-weight: 500;
+    font-family: 'Roboto', sans-serif;
+    transition: background 0.3s, transform 0.1s;
+}
+
+.delete-btn:hover {
+    background: #ff9ec3;
+}
+
+.delete-btn:active {
+    transform: scale(0.95);
+}
+
+.empty-message {
+    text-align: center;
+    color: #999;
+    padding: 60px 20px;
+    font-size: 16px;
+}
+
+/* 반응형 디자인 - 태블릿 */
+@media (max-width: 768px) {
+    .container {
+        max-width: 100%;
+    }
+
+    .header-top {
+        flex-direction: column;
+        gap: 12px;
+        padding: 12px 16px;
+    }
+
+    .user-info {
+        width: 100%;
+        justify-content: center;
+    }
+
+    .btn-logout {
+        width: 100%;
+        justify-content: center;
+    }
+
+    .app-title {
+        font-size: 28px;
+    }
+
+    .input-card {
+        padding: 20px;
+    }
+
+    .input-section {
+        flex-direction: column;
+    }
+
+    .input-wrapper,
+    .priority-wrapper {
+        width: 100%;
+        min-width: 100%;
+    }
+
+    .btn-add {
+        width: 100%;
+        justify-content: center;
+    }
+
+    .todo-item {
+        padding: 16px 20px;
+        flex-wrap: wrap;
+    }
+
+    .priority-badge {
+        order: -1;
+    }
+}
+
+/* 반응형 디자인 - 모바일 */
+@media (max-width: 480px) {
+    body {
+        padding: 12px;
+    }
+
+    .app-title {
+        font-size: 24px;
+    }
+
+    .app-title .material-icons {
+        font-size: 28px;
+    }
+
+    .input-card {
+        padding: 16px;
+    }
+
+    #todoInput,
+    #prioritySelect,
+    .btn-add {
+        padding: 14px 12px;
+        font-size: 14px;
+    }
+
+    #todoInput {
+        padding-left: 40px;
+    }
+
+    .todo-item {
+        padding: 14px 16px;
+        gap: 12px;
+    }
+
+    .todo-text {
+        font-size: 14px;
+        width: 100%;
+    }
+
+    .delete-btn {
+        margin-left: auto;
+    }
+
+    .priority-badge {
+        font-size: 11px;
+        padding: 4px 10px;
+    }
+}

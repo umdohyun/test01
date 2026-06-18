@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Tetris - 소개</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body class="landing">
+
+  <div class="landing-hero">
+    <div class="landing-logo">TETRIS</div>
+    <p class="landing-tagline">고전 블록 퍼즐의 정수 — 브라우저에서 바로 플레이</p>
+    <div style="display: flex; gap: 15px; justify-content: center;">
+      <a href="game.html" class="play-btn">▶ 게임 시작</a>
+      <a href="leaderboard.html" class="play-btn" style="background: linear-gradient(135deg, #ffd700, #ff9500);">🏆 리더보드</a>
+    </div>
+  </div>
+
+  <section class="landing-section">
+    <h2 class="section-title">게임 소개</h2>
+    <div class="card-grid">
+      <div class="card">
+        <div class="card-icon">🟦</div>
+        <h3>7종 테트로미노</h3>
+        <p>I · O · T · S · Z · J · L 형태의 블록이 무작위로 등장합니다.</p>
+      </div>
+      <div class="card">
+        <div class="card-icon">⚡</div>
+        <h3>레벨 시스템</h3>
+        <p>30초마다 레벨이 오르고, 줄을 지울수록 보너스 레벨업. 속도는 계속 빨라집니다.</p>
+      </div>
+      <div class="card">
+        <div class="card-icon">🏆</div>
+        <h3>점수 시스템</h3>
+        <p>한 번에 많은 줄을 지울수록 높은 점수. 레벨이 높을수록 배율도 상승합니다.</p>
+      </div>
+      <div class="card">
+        <div class="card-icon">👻</div>
+        <h3>고스트 블록</h3>
+        <p>블록이 떨어질 위치를 반투명하게 미리 표시해 정확한 배치를 도와줍니다.</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="landing-section">
+    <h2 class="section-title">조작 방법</h2>
+    <div class="controls-grid">
+      <div class="key-row">
+        <kbd>←</kbd><kbd>→</kbd>
+        <span>블록 좌우 이동</span>
+      </div>
+      <div class="key-row">
+        <kbd>↑</kbd>
+        <span>블록 회전</span>
+      </div>
+      <div class="key-row">
+        <kbd>↓</kbd>
+        <span>빠른 낙하 (소프트 드롭)</span>
+      </div>
+      <div class="key-row">
+        <kbd>Space</kbd>
+        <span>즉시 낙하 (하드 드롭)</span>
+      </div>
+      <div class="key-row">
+        <kbd>P</kbd>
+        <span>일시정지 / 재개</span>
+      </div>
+    </div>
+  </section>
+
+  <section class="landing-section">
+    <h2 class="section-title">점수 계산표</h2>
+    <table class="score-table">
+      <thead>
+        <tr><th>지운 줄 수</th><th>기본 점수</th><th>비고</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>1줄</td><td>100 × 레벨</td><td>Single</td></tr>
+        <tr><td>2줄</td><td>300 × 레벨</td><td>Double</td></tr>
+        <tr><td>3줄</td><td>500 × 레벨</td><td>Triple</td></tr>
+        <tr><td>4줄</td><td>800 × 레벨</td><td>Tetris!</td></tr>
+      </tbody>
+    </table>
+  </section>
+
+  <div class="landing-cta">
+    <div style="display: flex; gap: 20px; justify-content: center;">
+      <a href="game.html" class="play-btn large">▶ 지금 플레이</a>
+      <a href="leaderboard.html" class="play-btn large" style="background: linear-gradient(135deg, #ffd700, #ff9500);">🏆 리더보드</a>
+    </div>
+  </div>
+
+</body>
+</html>

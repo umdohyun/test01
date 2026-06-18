@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Tetris - 리더보드</title>
+  <link rel="stylesheet" href="style.css" />
+  <style>
+    .leaderboard-container {
+      max-width: 800px;
+      margin: 40px auto;
+      padding: 40px;
+      background: linear-gradient(135deg, rgba(20,20,40,0.95), rgba(10,10,30,0.95));
+      border-radius: 16px;
+      border: 2px solid rgba(0,245,255,0.3);
+    }
+
+    .leaderboard-title {
+      text-align: center;
+      font-size: 2.5rem;
+      font-weight: bold;
+      color: #00f5ff;
+      text-shadow: 0 0 20px rgba(0,245,255,0.6);
+      margin-bottom: 30px;
+    }
+
+    .leaderboard-table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+
+    .leaderboard-table thead {
+      background: rgba(0,245,255,0.1);
+    }
+
+    .leaderboard-table th {
+      padding: 15px;
+      text-align: left;
+      color: #00f5ff;
+      font-weight: bold;
+      border-bottom: 2px solid rgba(0,245,255,0.3);
+    }
+
+    .leaderboard-table td {
+      padding: 15px;
+      color: #fff;
+      border-bottom: 1px solid rgba(255,255,255,0.1);
+    }
+
+    .leaderboard-table tr:hover {
+      background: rgba(0,245,255,0.05);
+    }
+
+    .rank {
+      font-size: 1.3rem;
+      font-weight: bold;
+      color: #ffd700;
+      width: 60px;
+    }
+
+    .rank-1 { color: #ffd700; }
+    .rank-2 { color: #c0c0c0; }
+    .rank-3 { color: #cd7f32; }
+
+    .email {
+      color: #fff;
+      font-weight: 500;
+    }
+
+    .score {
+      color: #00ff88;
+      font-weight: bold;
+      font-size: 1.2rem;
+    }
+
+    .stats {
+      color: rgba(255,255,255,0.7);
+      font-size: 0.9rem;
+    }
+
+    .date {
+      color: rgba(255,255,255,0.5);
+      font-size: 0.85rem;
+    }
+
+    .loading {
+      text-align: center;
+      color: #00f5ff;
+      font-size: 1.2rem;
+      padding: 40px;
+    }
+
+    .nav-buttons {
+      display: flex;
+      gap: 15px;
+      justify-content: center;
+      margin-top: 30px;
+    }
+
+    .nav-btn {
+      padding: 12px 24px;
+      background: linear-gradient(135deg, #00f5ff, #0080ff);
+      border: none;
+      border-radius: 8px;
+      color: #fff;
+      font-weight: bold;
+      cursor: pointer;
+      transition: all 0.3s;
+    }
+
+    .nav-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 20px rgba(0,245,255,0.4);
+    }
+
+    .nav-btn.secondary {
+      background: transparent;
+      border: 1px solid rgba(255,255,255,0.3);
+    }
+
+    .nav-btn.secondary:hover {
+      border-color: rgba(255,255,255,0.6);
+      background: rgba(255,255,255,0.05);
+    }
+  </style>
+</head>
+<body>
+  <a href="index.html" class="back-link">← 홈으로</a>
+
+  <div class="leaderboard-container">
+    <h1 class="leaderboard-title">🏆 리더보드</h1>
+
+    <div id="loading" class="loading">로딩 중...</div>
+
+    <table id="leaderboard-table" class="leaderboard-table" style="display: none;">
+      <thead>
+        <tr>
+          <th>순위</th>
+          <th>플레이어</th>
+          <th>점수</th>
+          <th>레벨</th>
+          <th>라인</th>
+          <th>플레이 날짜</th>
+        </tr>
+      </thead>
+      <tbody id="leaderboard-body">
+      </tbody>
+    </table>
+
+    <div class="nav-buttons">
+      <button class="nav-btn" onclick="window.location.href='game.html'">게임하기</button>
+      <button class="nav-btn secondary" onclick="loadLeaderboard()">새로고침</button>
+    </div>
+  </div>
+
+  <script>
+    const API_BASE = 'http://localhost:8001/api';
+
+    function formatDate(dateString) {
+      const date = new Date(dateString);
+      return date.toLocaleString('ko-KR', {
+        year: 'numeric',
+        month: '2-digit',
+        day: '2-digit',
+        hour: '2-digit',
+        minute: '2-digit'
+      });
+    }
+
+    async function loadLeaderboard() {
+      const loading = document.getElementById('loading');
+      const table = document.getElementById('leaderboard-table');
+      const tbody = document.getElementById('leaderboard-body');
+
+      loading.style.display = 'block';
+      table.style.display = 'none';
+
+      try {
+        const response = await fetch(`${API_BASE}/leaderboard?limit=20`);
+        const data = await response.json();
+
+        tbody.innerHTML = '';
+
+        if (data.length === 0) {
+          tbody.innerHTML = '<tr><td colspan="6" style="text-align: center; padding: 40px; color: rgba(255,255,255,0.5);">아직 기록이 없습니다.</td></tr>';
+        } else {
+          data.forEach((entry, index) => {
+            const rank = index + 1;
+            const rankClass = rank <= 3 ? `rank-${rank}` : '';
+
+            const row = document.createElement('tr');
+            row.innerHTML = `
+              <td class="rank ${rankClass}">#${rank}</td>
+              <td class="email">${entry.email}</td>
+              <td class="score">${entry.score.toLocaleString()}</td>
+              <td class="stats">${entry.level}</td>
+              <td class="stats">${entry.lines}</td>
+              <td class="date">${formatDate(entry.played_at)}</td>
+            `;
+            tbody.appendChild(row);
+          });
+        }
+
+        loading.style.display = 'none';
+        table.style.display = 'table';
+      } catch (error) {
+        loading.textContent = '리더보드를 불러오는데 실패했습니다.';
+        console.error('Error loading leaderboard:', error);
+      }
+    }
+
+    loadLeaderboard();
+  </script>
+</body>
+</html>

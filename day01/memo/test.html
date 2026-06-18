@@ -1,0 +1,371 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>메모장 API 테스트</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+        }
+        .container {
+            background: white;
+            border-radius: 12px;
+            padding: 30px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+        }
+        h1 {
+            color: #667eea;
+            text-align: center;
+            margin-bottom: 10px;
+        }
+        .swagger-link {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        .swagger-link a {
+            display: inline-block;
+            background: #667eea;
+            color: white;
+            padding: 12px 30px;
+            text-decoration: none;
+            border-radius: 8px;
+            font-weight: bold;
+            transition: all 0.3s;
+        }
+        .swagger-link a:hover {
+            background: #764ba2;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+        }
+        .section {
+            margin-bottom: 30px;
+            border: 2px solid #667eea;
+            border-radius: 8px;
+            padding: 20px;
+            background: #f8f9ff;
+        }
+        .section h2 {
+            color: #667eea;
+            margin-top: 0;
+        }
+        .form-group {
+            margin-bottom: 15px;
+        }
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+            color: #333;
+        }
+        input, textarea {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            box-sizing: border-box;
+            font-family: inherit;
+        }
+        textarea {
+            min-height: 100px;
+            resize: vertical;
+        }
+        button {
+            background: #667eea;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: bold;
+            transition: all 0.3s;
+        }
+        button:hover {
+            background: #764ba2;
+            transform: translateY(-1px);
+        }
+        .response {
+            margin-top: 15px;
+            padding: 15px;
+            background: white;
+            border-radius: 5px;
+            border-left: 4px solid #667eea;
+            white-space: pre-wrap;
+            font-family: 'Courier New', monospace;
+            font-size: 14px;
+            max-height: 400px;
+            overflow-y: auto;
+        }
+        .memos-list {
+            display: grid;
+            gap: 15px;
+            margin-top: 15px;
+        }
+        .memo-card {
+            background: white;
+            padding: 15px;
+            border-radius: 5px;
+            border-left: 4px solid #667eea;
+        }
+        .memo-card h3 {
+            margin: 0 0 10px 0;
+            color: #667eea;
+        }
+        .memo-card p {
+            margin: 5px 0;
+        }
+        .memo-card small {
+            color: #666;
+        }
+        .memo-actions {
+            margin-top: 10px;
+            display: flex;
+            gap: 10px;
+        }
+        .memo-actions button {
+            padding: 5px 15px;
+            font-size: 14px;
+        }
+        .btn-delete {
+            background: #dc3545;
+        }
+        .btn-delete:hover {
+            background: #c82333;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>📝 메모장 CRUD API 테스트</h1>
+
+        <div class="swagger-link">
+            <a href="http://localhost:8000/docs" target="_blank">🚀 Swagger UI 열기 (권장)</a>
+        </div>
+
+        <div class="section">
+            <h2>📋 모든 메모 조회 (GET /memos)</h2>
+            <button onclick="getAllMemos()">모든 메모 가져오기</button>
+            <div id="all-memos" class="memos-list"></div>
+        </div>
+
+        <div class="section">
+            <h2>➕ 메모 생성 (POST /memos)</h2>
+            <div class="form-group">
+                <label>제목</label>
+                <input type="text" id="create-title" placeholder="메모 제목을 입력하세요">
+            </div>
+            <div class="form-group">
+                <label>내용</label>
+                <textarea id="create-content" placeholder="메모 내용을 입력하세요"></textarea>
+            </div>
+            <button onclick="createMemo()">메모 생성</button>
+            <div id="create-response" class="response" style="display:none;"></div>
+        </div>
+
+        <div class="section">
+            <h2>🔍 특정 메모 조회 (GET /memos/{id})</h2>
+            <div class="form-group">
+                <label>메모 ID</label>
+                <input type="number" id="get-id" placeholder="조회할 메모 ID">
+            </div>
+            <button onclick="getMemo()">메모 조회</button>
+            <div id="get-response" class="response" style="display:none;"></div>
+        </div>
+
+        <div class="section">
+            <h2>✏️ 메모 수정 (PUT /memos/{id})</h2>
+            <div class="form-group">
+                <label>메모 ID</label>
+                <input type="number" id="update-id" placeholder="수정할 메모 ID">
+            </div>
+            <div class="form-group">
+                <label>새 제목 (선택)</label>
+                <input type="text" id="update-title" placeholder="새 제목 (비워두면 변경 안 함)">
+            </div>
+            <div class="form-group">
+                <label>새 내용 (선택)</label>
+                <textarea id="update-content" placeholder="새 내용 (비워두면 변경 안 함)"></textarea>
+            </div>
+            <button onclick="updateMemo()">메모 수정</button>
+            <div id="update-response" class="response" style="display:none;"></div>
+        </div>
+
+        <div class="section">
+            <h2>🗑️ 메모 삭제 (DELETE /memos/{id})</h2>
+            <div class="form-group">
+                <label>메모 ID</label>
+                <input type="number" id="delete-id" placeholder="삭제할 메모 ID">
+            </div>
+            <button onclick="deleteMemo()" class="btn-delete">메모 삭제</button>
+            <div id="delete-response" class="response" style="display:none;"></div>
+        </div>
+    </div>
+
+    <script>
+        const API_BASE = 'http://localhost:8000';
+
+        async function getAllMemos() {
+            try {
+                const response = await fetch(`${API_BASE}/memos`);
+                const data = await response.json();
+
+                const container = document.getElementById('all-memos');
+
+                if (Object.keys(data).length === 0) {
+                    container.innerHTML = '<p style="text-align:center; color:#666;">메모가 없습니다.</p>';
+                    return;
+                }
+
+                container.innerHTML = Object.values(data).map(memo => `
+                    <div class="memo-card">
+                        <h3>${memo.title}</h3>
+                        <p>${memo.content}</p>
+                        <small>생성: ${new Date(memo.created_at).toLocaleString()}</small><br>
+                        <small>수정: ${new Date(memo.updated_at).toLocaleString()}</small>
+                        <div class="memo-actions">
+                            <button onclick="loadMemoForUpdate(${memo.id}, '${memo.title.replace(/'/g, "\\'")}', '${memo.content.replace(/'/g, "\\'")}')">수정</button>
+                            <button onclick="deleteMemoById(${memo.id})" class="btn-delete">삭제</button>
+                        </div>
+                    </div>
+                `).join('');
+            } catch (error) {
+                alert('오류: ' + error.message);
+            }
+        }
+
+        async function createMemo() {
+            const title = document.getElementById('create-title').value;
+            const content = document.getElementById('create-content').value;
+
+            if (!title || !content) {
+                alert('제목과 내용을 모두 입력하세요.');
+                return;
+            }
+
+            try {
+                const response = await fetch(`${API_BASE}/memos`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ title, content })
+                });
+
+                const data = await response.json();
+                showResponse('create-response', data);
+
+                document.getElementById('create-title').value = '';
+                document.getElementById('create-content').value = '';
+
+                getAllMemos();
+            } catch (error) {
+                alert('오류: ' + error.message);
+            }
+        }
+
+        async function getMemo() {
+            const id = document.getElementById('get-id').value;
+
+            if (!id) {
+                alert('메모 ID를 입력하세요.');
+                return;
+            }
+
+            try {
+                const response = await fetch(`${API_BASE}/memos/${id}`);
+                const data = await response.json();
+                showResponse('get-response', data);
+            } catch (error) {
+                alert('오류: ' + error.message);
+            }
+        }
+
+        async function updateMemo() {
+            const id = document.getElementById('update-id').value;
+            const title = document.getElementById('update-title').value;
+            const content = document.getElementById('update-content').value;
+
+            if (!id) {
+                alert('메모 ID를 입력하세요.');
+                return;
+            }
+
+            const body = {};
+            if (title) body.title = title;
+            if (content) body.content = content;
+
+            try {
+                const response = await fetch(`${API_BASE}/memos/${id}`, {
+                    method: 'PUT',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(body)
+                });
+
+                const data = await response.json();
+                showResponse('update-response', data);
+
+                document.getElementById('update-id').value = '';
+                document.getElementById('update-title').value = '';
+                document.getElementById('update-content').value = '';
+
+                getAllMemos();
+            } catch (error) {
+                alert('오류: ' + error.message);
+            }
+        }
+
+        async function deleteMemo() {
+            const id = document.getElementById('delete-id').value;
+
+            if (!id) {
+                alert('메모 ID를 입력하세요.');
+                return;
+            }
+
+            if (!confirm(`메모 ${id}를 삭제하시겠습니까?`)) {
+                return;
+            }
+
+            await deleteMemoById(id);
+        }
+
+        async function deleteMemoById(id) {
+            try {
+                const response = await fetch(`${API_BASE}/memos/${id}`, {
+                    method: 'DELETE'
+                });
+
+                const data = await response.json();
+                showResponse('delete-response', data);
+
+                document.getElementById('delete-id').value = '';
+
+                getAllMemos();
+            } catch (error) {
+                alert('오류: ' + error.message);
+            }
+        }
+
+        function loadMemoForUpdate(id, title, content) {
+            document.getElementById('update-id').value = id;
+            document.getElementById('update-title').value = title;
+            document.getElementById('update-content').value = content;
+
+            document.querySelector('.section:nth-child(5)').scrollIntoView({ behavior: 'smooth' });
+        }
+
+        function showResponse(elementId, data) {
+            const element = document.getElementById(elementId);
+            element.textContent = JSON.stringify(data, null, 2);
+            element.style.display = 'block';
+        }
+
+        // 페이지 로드 시 메모 목록 가져오기
+        getAllMemos();
+    </script>
+</body>
+</html>

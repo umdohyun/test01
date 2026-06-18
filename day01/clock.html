@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>시계</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      background: #0f0f1a;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      font-family: 'Segoe UI', sans-serif;
+      color: #fff;
+    }
+
+    .container {
+      text-align: center;
+    }
+
+    /* 아날로그 시계 */
+    .clock-face {
+      width: 280px;
+      height: 280px;
+      border-radius: 50%;
+      background: radial-gradient(circle at 30% 30%, #2a2a4a, #0d0d20);
+      border: 3px solid #4a4a8a;
+      box-shadow:
+        0 0 30px rgba(100, 100, 255, 0.3),
+        inset 0 0 30px rgba(0, 0, 0, 0.5);
+      position: relative;
+      margin: 0 auto 40px;
+    }
+
+    .clock-face::before {
+      content: '';
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      width: 14px;
+      height: 14px;
+      background: #7878ff;
+      border-radius: 50%;
+      transform: translate(-50%, -50%);
+      z-index: 10;
+      box-shadow: 0 0 8px #7878ff;
+    }
+
+    /* 눈금 */
+    .tick {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform-origin: 0 0;
+    }
+
+    .tick span {
+      display: block;
+      background: #7878ff;
+      border-radius: 2px;
+    }
+
+    .tick.hour-tick span {
+      width: 3px;
+      height: 14px;
+      margin-left: -1.5px;
+      margin-top: -127px;
+    }
+
+    .tick.min-tick span {
+      width: 1.5px;
+      height: 8px;
+      margin-left: -0.75px;
+      margin-top: -127px;
+      background: #4a4a8a;
+    }
+
+    /* 숫자 */
+    .number {
+      position: absolute;
+      width: 30px;
+      height: 30px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 14px;
+      font-weight: 600;
+      color: #aaaaff;
+      transform: translate(-50%, -50%);
+    }
+
+    /* 시침 / 분침 / 초침 */
+    .hand {
+      position: absolute;
+      bottom: 50%;
+      left: 50%;
+      transform-origin: bottom center;
+      border-radius: 4px;
+    }
+
+    .hour-hand {
+      width: 6px;
+      height: 75px;
+      background: #c8c8ff;
+      margin-left: -3px;
+      box-shadow: 0 0 6px rgba(200, 200, 255, 0.6);
+    }
+
+    .minute-hand {
+      width: 4px;
+      height: 105px;
+      background: #9898ff;
+      margin-left: -2px;
+      box-shadow: 0 0 6px rgba(150, 150, 255, 0.6);
+    }
+
+    .second-hand {
+      width: 2px;
+      height: 115px;
+      background: #ff6b6b;
+      margin-left: -1px;
+      box-shadow: 0 0 8px rgba(255, 107, 107, 0.8);
+    }
+
+    /* 디지털 시계 */
+    .digital {
+      font-size: 52px;
+      font-weight: 700;
+      letter-spacing: 4px;
+      background: linear-gradient(90deg, #7878ff, #ff78c8);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      text-shadow: none;
+      filter: drop-shadow(0 0 12px rgba(120, 120, 255, 0.5));
+    }
+
+    .date {
+      font-size: 16px;
+      color: #8888bb;
+      margin-top: 10px;
+      letter-spacing: 2px;
+    }
+
+    /* 요일 배지 */
+    .day-badge {
+      display: inline-block;
+      background: rgba(120, 120, 255, 0.15);
+      border: 1px solid rgba(120, 120, 255, 0.4);
+      border-radius: 20px;
+      padding: 4px 14px;
+      font-size: 13px;
+      color: #aaaaff;
+      margin-top: 8px;
+      letter-spacing: 1px;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <!-- 아날로그 시계 -->
+    <div class="clock-face" id="clockFace">
+      <div class="hand hour-hand" id="hourHand"></div>
+      <div class="hand minute-hand" id="minuteHand"></div>
+      <div class="hand second-hand" id="secondHand"></div>
+    </div>
+
+    <!-- 디지털 시계 -->
+    <div class="digital" id="digital"></div>
+    <div class="date" id="dateDisplay"></div>
+    <div class="day-badge" id="dayDisplay"></div>
+  </div>
+
+  <script>
+    const DAYS = ['일요일', '월요일', '화요일', '수요일', '목요일', '금요일', '토요일'];
+    const face = document.getElementById('clockFace');
+
+    // 눈금 60개 생성
+    for (let i = 0; i < 60; i++) {
+      const tick = document.createElement('div');
+      tick.className = i % 5 === 0 ? 'tick hour-tick' : 'tick min-tick';
+      tick.style.transform = `rotate(${i * 6}deg)`;
+      tick.innerHTML = '<span></span>';
+      face.appendChild(tick);
+    }
+
+    // 숫자 1~12 배치
+    for (let i = 1; i <= 12; i++) {
+      const angle = (i / 12) * 2 * Math.PI - Math.PI / 2;
+      const r = 110;
+      const x = 140 + r * Math.cos(angle);
+      const y = 140 + r * Math.sin(angle);
+      const num = document.createElement('div');
+      num.className = 'number';
+      num.style.left = x + 'px';
+      num.style.top = y + 'px';
+      num.textContent = i;
+      face.appendChild(num);
+    }
+
+    function pad(n) {
+      return String(n).padStart(2, '0');
+    }
+
+    function update() {
+      const now = new Date();
+      const h = now.getHours();
+      const m = now.getMinutes();
+      const s = now.getSeconds();
+      const ms = now.getMilliseconds();
+
+      // 부드러운 침 이동
+      const secDeg  = (s + ms / 1000) * 6;
+      const minDeg  = (m + s / 60) * 6;
+      const hourDeg = ((h % 12) + m / 60) * 30;
+
+      document.getElementById('secondHand').style.transform = `rotate(${secDeg}deg)`;
+      document.getElementById('minuteHand').style.transform = `rotate(${minDeg}deg)`;
+      document.getElementById('hourHand').style.transform   = `rotate(${hourDeg}deg)`;
+
+      // 디지털
+      document.getElementById('digital').textContent =
+        `${pad(h)}:${pad(m)}:${pad(s)}`;
+
+      // 날짜
+      const year  = now.getFullYear();
+      const month = pad(now.getMonth() + 1);
+      const day   = pad(now.getDate());
+      document.getElementById('dateDisplay').textContent =
+        `${year}년 ${month}월 ${day}일`;
+      document.getElementById('dayDisplay').textContent =
+        DAYS[now.getDay()];
+    }
+
+    update();
+    setInterval(update, 50);
+  </script>
+</body>
+</html>

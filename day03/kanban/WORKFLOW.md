@@ -430,5 +430,161 @@ kanban/
 
 ---
 
+### 14. 개인 저장소로 GitHub Pages 배포
+
+**프롬프트:**
+```
+음private 이긴한데 내가 관리자가 아니라 나중에 바꿔야할 것 같아.
+B로 해볼까?
+하지만 원래 git 경로에도 commit & push 해
+```
+
+**작업 요약:**
+- 개인 Public 저장소로 배포 결정 (Private 저장소는 GitHub Pages 무료 사용 불가)
+- 칸반보드 파일 전체를 `https://github.com/umdohyun/test01.git`로 복사
+- README.md 생성: 프로젝트 소개, 기능, 설치 가이드, 기술 스택
+- Git 초기 커밋 및 push 완료
+- 원본 저장소 WORKFLOW.md 업데이트
+
+**결과:** ✅ 개인 저장소 배포 완료, 배포 URL: https://umdohyun.github.io/test01/
+
+---
+
+### 15. Photo Album 애플리케이션 구현
+
+**프롬프트:**
+```
+사진을 개별앨범으로 정리하는 어플리케이션을 구현해줘. 앨범은 날짜별로 그룹화되며, 메인페이지에서 드래그앤드랍으로 재배치가 가능하다. 앨범간 사진 중첩은 허용하지않고, 각 앨범내 사진은 타일형 미리보기 UI로 구현한다.
+```
+
+**작업 요약:**
+- 새로운 폴더 생성: `day03/photo-album/`
+- `index.html` (13KB): 메인 앨범 페이지
+  - 업로드 섹션 (파일 선택 버튼)
+  - 앨범 그리드 (날짜별 카드)
+  - 앨범 상세 모달 (사진 타일 그리드)
+  - 사진 뷰어 모달 (전체 화면, prev/next 네비게이션)
+  - 로딩 오버레이 (업로드 진행 표시)
+- `style.css` (12KB): 전체 스타일링
+  - 보라색 그라데이션 배경 (칸반보드와 동일 테마)
+  - Grid 레이아웃 (auto-fill, minmax(320px, 1fr))
+  - 앨범 카드 드래그 상태 스타일 (.dragging)
+  - 타일 미리보기 (2x2 그리드, 최대 4장 표시)
+  - 모달 애니메이션 (fadeIn, slideUp)
+  - 반응형 디자인 (768px 브레이크포인트)
+- `script.js` (11KB): 앨범 로직 및 드래그앤드롭
+  - `organizeAlbums()`: 날짜별 자동 그룹화 (YYYY-MM-DD)
+  - `renderAlbums()`: 앨범 카드 생성, 저장된 순서 적용
+  - 드래그 핸들러: dragstart, dragover, drop, dragend
+  - `openAlbum()`: 앨범 상세 모달 열기
+  - `openPhotoViewer()`: 사진 전체 화면 뷰어 열기
+  - `handleFileUpload()`: 다중 파일 업로드 처리
+  - `handleDeletePhoto()`: 사진 삭제 (Storage + DB)
+- `storage.js` (6.5KB): Supabase Storage API 레이어
+  - `uploadPhoto()`: 파일 업로드 (10MB 제한, 유효성 검사)
+  - `fetchPhotos()`: 사용자 사진 목록 조회
+  - `deletePhoto()`: Storage + DB 동시 삭제
+  - `updateAlbumOrder()`: 드래그앤드롭 순서 저장 (JSONB)
+  - `getAlbumOrder()`: 저장된 순서 불러오기
+  - Storage 경로: `photos/{userId}/{timestamp}_{random}.{ext}`
+- `migration.sql` (5KB): 데이터베이스 스키마
+  - `photos` 테이블: 파일 메타데이터 (path, url, size, mime_type)
+  - `user_settings` 테이블: album_order (JSONB) 저장
+  - RLS 정책: 사용자별 격리
+  - Storage RLS 정책: 폴더별 접근 제어
+  - Storage Bucket 생성 가이드 (수동 작업 필요)
+- `auth.js` (6.9KB): 칸반보드에서 복사 (인증 공유)
+- `config.js` (0.2KB): 칸반보드에서 복사 (Supabase 자격증명 공유)
+- `README.md` (6.6KB): Photo Album 문서
+  - 주요 기능 설명 (날짜별 그룹화, 드래그앤드롭, 타일 미리보기)
+  - 설치 가이드 (Supabase 설정, Storage 버킷 생성)
+  - UI 구조 다이어그램
+  - 보안 및 데이터 구조 설명
+  - 트러블슈팅 가이드
+
+**주요 특징:**
+- ✅ 날짜별 자동 그룹화 (업로드 날짜 기준)
+- ✅ 드래그앤드롭 재배치 (순서는 user_settings에 저장)
+- ✅ 타일형 미리보기 (앨범당 최대 4장 표시)
+- ✅ 사진 중복 방지 (한 사진 = 한 앨범)
+- ✅ Supabase Storage 실제 파일 업로드
+- ✅ 전체 화면 사진 뷰어 (prev/next 네비게이션)
+- ✅ 사진 삭제 기능 (Storage + DB 동시 삭제)
+- ✅ 개인 저장소 (RLS로 사용자별 격리)
+
+**데이터베이스 구조:**
+```sql
+photos (
+  id UUID PRIMARY KEY,
+  user_id UUID REFERENCES auth.users,
+  file_path TEXT,
+  url TEXT,
+  file_size INTEGER,
+  mime_type VARCHAR(100),
+  original_name TEXT,
+  created_at TIMESTAMP
+)
+
+user_settings (
+  id UUID PRIMARY KEY,
+  user_id UUID UNIQUE REFERENCES auth.users,
+  album_order JSONB DEFAULT '[]',
+  created_at TIMESTAMP
+)
+```
+
+**결과:** ✅ Photo Album 애플리케이션 완성 및 커밋 (8 파일, 2,063줄)
+
+---
+
+### 16. WORKFLOW.md 자동 갱신 규칙 추가
+
+**프롬프트:**
+```
+아 그리고 CLAUDE.md에 지금까지 했던 내 프롬포트 내용과 일련의 작업내용을 WORKFLOW.md 에 작성해줘. 앞으로 다른 작업을 해도 말이야
+```
+
+**작업 요약:**
+- WORKFLOW.md에 Photo Album 작업 내용 추가
+- CLAUDE.md에 "Workflow Documentation" 섹션 추가
+- 모든 작업 후 WORKFLOW.md 자동 업데이트 규칙 명시
+- 프롬프트 원문 보존 원칙 추가
+- 작업 요약 포맷 표준화
+
+**WORKFLOW.md 업데이트 규칙:**
+- ✅ 모든 사용자 요청 후 WORKFLOW.md 갱신
+- ✅ 프롬프트는 원문 그대로 보존
+- ✅ 작업 요약은 bullet point로 간결하게
+- ✅ 생성/수정된 파일 명시
+- ✅ 결과 상태 명확히 표시
+- ✅ Git 커밋 전 필수 체크
+
+**결과:** ✅ 개발 과정 자동 문서화 시스템 구축
+
+---
+
+---
+
+### 17. Photo Album 인증 및 경로 수정
+
+**프롬프트:**
+```
+http://localhost:8000/ 이걸로 들어가서 확인하려는데 뭔가 칸반보드가 열려. 이전 서버에 연결되어있는건가?
+너가 말한 사이트로 들어가려니까 자꾸 칸반보드 로그인쪽으로 가져
+확인했어. 이제 데모모드 풀고 업로드 기능도 활성화하자.
+```
+
+**작업 요약:**
+- 서버 전환: kanban → photo-album 폴더에서 실행
+- `script.js` 수정: `../kanban/login.html` → `login.html` (상대 경로)
+- `login.html`, `signup.html` 복사: kanban → photo-album
+- 데모 모드 구현 (임시): 인증 우회하여 UI 확인 가능하게
+- 데모 모드 제거: 정상 인증 플로우로 복원
+- `index-backup.html` 생성: 원본 백업
+
+**결과:** ✅ Photo Album 인증 시스템 정상 작동, 로그인 후 사진 업로드 가능
+
+---
+
 **문서 작성일**: 2026-06-18  
-**최종 수정일**: 2026-06-18 (Phase 1 & 2 완료)
+**최종 수정일**: 2026-06-18 (Phase 1 & 2 완료 + GitHub Pages 배포 + Photo Album 구현 및 인증 수정)

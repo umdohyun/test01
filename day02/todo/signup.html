@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>회원가입 - 오늘 할 일</title>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+    <link rel="stylesheet" href="auth-style.css">
+</head>
+<body>
+    <div class="auth-container">
+        <div class="auth-card">
+            <div class="auth-header">
+                <h1 class="auth-title">
+                    <span class="emoji">✨</span>
+                    회원가입
+                    <span class="emoji">🌸</span>
+                </h1>
+                <p class="auth-subtitle">새로운 계정을 만들어보세요</p>
+            </div>
+
+            <div id="errorMessage" class="error-message"></div>
+            <div id="successMessage" class="success-message"></div>
+
+            <form id="signupForm" class="auth-form">
+                <div class="form-group">
+                    <label for="email" class="form-label">이메일</label>
+                    <input
+                        type="email"
+                        id="email"
+                        class="form-input"
+                        placeholder="your@email.com"
+                        required
+                    >
+                </div>
+
+                <div class="form-group">
+                    <label for="password" class="form-label">비밀번호 (최소 6자)</label>
+                    <input
+                        type="password"
+                        id="password"
+                        class="form-input"
+                        placeholder="••••••"
+                        required
+                        minlength="6"
+                    >
+                </div>
+
+                <div class="form-group">
+                    <label for="passwordConfirm" class="form-label">비밀번호 확인</label>
+                    <input
+                        type="password"
+                        id="passwordConfirm"
+                        class="form-input"
+                        placeholder="••••••"
+                        required
+                        minlength="6"
+                    >
+                </div>
+
+                <button type="submit" id="signupBtn" class="btn-primary">
+                    <span class="material-icons">person_add</span>
+                    회원가입
+                </button>
+            </form>
+
+            <div class="divider">또는</div>
+
+            <div class="social-buttons">
+                <button type="button" id="googleBtn" class="btn-social btn-google">
+                    <svg width="18" height="18" viewBox="0 0 18 18" style="margin-right: 8px;">
+                        <path fill="#4285F4" d="M17.64 9.2c0-.637-.057-1.251-.164-1.84H9v3.481h4.844c-.209 1.125-.843 2.078-1.796 2.717v2.258h2.908c1.702-1.567 2.684-3.875 2.684-6.615z"/>
+                        <path fill="#34A853" d="M9 18c2.43 0 4.467-.806 5.956-2.184l-2.908-2.258c-.806.54-1.837.86-3.048.86-2.344 0-4.328-1.584-5.036-3.711H.957v2.332C2.438 15.983 5.482 18 9 18z"/>
+                        <path fill="#FBBC05" d="M3.964 10.707c-.18-.54-.282-1.117-.282-1.707s.102-1.167.282-1.707V4.961H.957C.347 6.175 0 7.55 0 9s.348 2.825.957 4.039l3.007-2.332z"/>
+                        <path fill="#EA4335" d="M9 3.58c1.321 0 2.508.454 3.44 1.345l2.582-2.58C13.463.891 11.426 0 9 0 5.482 0 2.438 2.017.957 4.961L3.964 7.293C4.672 5.163 6.656 3.58 9 3.58z"/>
+                    </svg>
+                    Google로 시작하기
+                </button>
+
+                <button type="button" id="githubBtn" class="btn-social btn-github">
+                    <svg width="18" height="18" viewBox="0 0 16 16" fill="currentColor" style="margin-right: 8px;">
+                        <path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"/>
+                    </svg>
+                    GitHub로 시작하기
+                </button>
+            </div>
+
+            <div class="auth-footer">
+                이미 계정이 있으신가요? <a href="login.html" class="auth-link">로그인</a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Supabase 클라이언트 라이브러리 -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <!-- Supabase 설정 -->
+    <script src="config.js"></script>
+    <!-- 인증 로직 -->
+    <script src="auth.js"></script>
+    <!-- 페이지 로직 -->
+    <script>
+        // Supabase 클라이언트 초기화
+        const { createClient } = supabase;
+        const supabaseClient = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+        const signupForm = document.getElementById('signupForm');
+        const signupBtn = document.getElementById('signupBtn');
+        const errorMessage = document.getElementById('errorMessage');
+        const successMessage = document.getElementById('successMessage');
+
+        // 이미 로그인된 경우 리다이렉트
+        checkAuthAndRedirect();
+
+        async function checkAuthAndRedirect() {
+            const { session } = await getCurrentSession();
+            if (session) {
+                window.location.href = 'index.html';
+            }
+        }
+
+        signupForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+
+            const email = document.getElementById('email').value.trim();
+            const password = document.getElementById('password').value;
+            const passwordConfirm = document.getElementById('passwordConfirm').value;
+
+            // 비밀번호 확인
+            if (password !== passwordConfirm) {
+                errorMessage.textContent = '비밀번호가 일치하지 않습니다.';
+                errorMessage.classList.add('show');
+                return;
+            }
+
+            // 버튼 비활성화 및 로딩 표시
+            signupBtn.disabled = true;
+            signupBtn.innerHTML = '<span class="spinner"></span> 가입 중...';
+            errorMessage.classList.remove('show');
+            successMessage.classList.remove('show');
+
+            // 회원가입 시도
+            const result = await signUp(email, password);
+
+            if (result.success) {
+                successMessage.innerHTML =
+                    '✅ 회원가입 성공!<br>' +
+                    '📧 이메일로 인증 링크가 발송되었습니다.<br>' +
+                    '이메일을 확인하고 인증을 완료해주세요.';
+                successMessage.classList.add('show');
+
+                signupBtn.innerHTML = '<span class="material-icons">check</span> 가입 완료';
+
+                // 3초 후 로그인 페이지로 이동
+                setTimeout(() => {
+                    window.location.href = 'login.html';
+                }, 3000);
+            } else {
+                signupBtn.disabled = false;
+                signupBtn.innerHTML = '<span class="material-icons">person_add</span> 회원가입';
+
+                // 에러 메시지 한글화
+                let errorText = result.error;
+                if (result.error.includes('already registered')) {
+                    errorText = '이미 가입된 이메일입니다.';
+                } else if (result.error.includes('Password should be at least 6 characters')) {
+                    errorText = '비밀번호는 최소 6자 이상이어야 합니다.';
+                }
+
+                errorMessage.textContent = errorText;
+                errorMessage.classList.add('show');
+            }
+        });
+
+        // Google 회원가입
+        document.getElementById('googleBtn').addEventListener('click', async () => {
+            await signInWithGoogle();
+        });
+
+        // GitHub 회원가입
+        document.getElementById('githubBtn').addEventListener('click', async () => {
+            await signInWithGithub();
+        });
+    </script>
+</body>
+</html>

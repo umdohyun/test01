@@ -1,0 +1,11 @@
+tetris.db
+__pycache__/
+*.pyc
+*.log
+.DS_Store
+nohup.out
+.env
+.pytest_cache/
+htmlcov/
+.coverage
+*.egg-info/
