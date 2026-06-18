@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>칸반 보드</title>
+    <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <div class="header-content">
+                <h1>🎯 칸반 보드</h1>
+                <div class="user-info">
+                    <span id="userName">Loading...</span>
+                    <button id="logoutBtn" class="btn-logout">로그아웃</button>
+                </div>
+            </div>
+        </header>
+
+        <div class="kanban-board">
+            <div class="kanban-column" data-status="todo">
+                <div class="column-header">
+                    <h2>📝 할 일</h2>
+                    <span class="card-count" id="todo-count">0</span>
+                </div>
+                <div class="cards-container" id="todo-container">
+                    <div class="empty-state">카드를 드래그하거나 추가하세요</div>
+                </div>
+            </div>
+
+            <div class="kanban-column" data-status="in-progress">
+                <div class="column-header">
+                    <h2>⚙️ 진행중</h2>
+                    <span class="card-count" id="in-progress-count">0</span>
+                </div>
+                <div class="cards-container" id="in-progress-container">
+                    <div class="empty-state">카드를 드래그하거나 추가하세요</div>
+                </div>
+            </div>
+
+            <div class="kanban-column" data-status="done">
+                <div class="column-header">
+                    <h2>✅ 완료</h2>
+                    <span class="card-count" id="done-count">0</span>
+                </div>
+                <div class="cards-container" id="done-container">
+                    <div class="empty-state">카드를 드래그하거나 추가하세요</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="add-card-section">
+            <input type="text" id="cardInput" placeholder="새 카드 제목 입력..." maxlength="100">
+            <select id="statusSelect">
+                <option value="todo">할 일</option>
+                <option value="in-progress">진행중</option>
+                <option value="done">완료</option>
+            </select>
+            <button id="addBtn">추가</button>
+        </div>
+    </div>
+
+    <!-- Supabase -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="config.js"></script>
+    <script src="auth.js"></script>
+    <script src="boardApi.js"></script>
+    <script src="realtime.js"></script>
+    <script src="script.js"></script>
+</body>
+</html>

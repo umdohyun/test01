@@ -1,0 +1,16 @@
+# Supabase credentials
+# config.js (anon key는 공개해도 안전 - RLS 보호)
+
+# Claude session data
+.claude/
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Editor files
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
